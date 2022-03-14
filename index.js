@@ -1,4 +1,5 @@
 var main_vas;
+var main_ctx;
 
 var sim_grid_width = 120;
 var sim_grid_height = 120;
@@ -36,22 +37,30 @@ function reset_bound(field) {
 }
 */
 
+function add_source(x, s, dt) {
+    for (i=1; i<sim_grid_width - 1; i++) {
+        for (j=1; j<sim_grid_height - 1; j++) {
+            x[i][j] += dt * s[i][j];
+        }
+    }
+}
+
 function reset_bound(b, field) {
     var i, j;
     
     for (i=1; i<sim_grid_width - 1 ; i++) {
-        field[i][0]   = b==2 ? –field[i][1] : field[i][1];
-        field[i][sim_grid_height - 1] = b==2 ? –field[i][sim_grid_height - 1] : field[i][sim_grid_height - 1];
+        field[i][0]   = (b === 2) ? -field[i][1] : field[i][1];
+        field[i][sim_grid_height - 1] = b==2 ? -field[i][sim_grid_height - 1] : field[i][sim_grid_height - 1];
     }
     for (j=1; j<sim_grid_height - 1; j++) {
-        field[0][j]   = b==1 ? –field[1][j] : field[1][j];
-        field[sim_grid_width - 1][j] = b==1 ? –field[sim_grid_width - 1][j] : field[sim_grid_width - 1][j];
+        field[0][j]   = b==1 ? -field[1][j] : field[1][j];
+        field[sim_grid_width - 1][j] = b==1 ? -field[sim_grid_width - 1][j] : field[sim_grid_width - 1][j];
     }
     
-    x[0][0]     = 0.5*(x[1][0]   + x[0][1]);
-    x[0][sim_grid_height - 1]   = 0.5*(x[1][sim_grid_height - 1] + x[0][sim_grid_height - 2]);
-    x[sim_grid_width - 1][0]   = 0.5*(x[sim_grid_width - 2][0]   + x[sim_grid_width - 1][1]);
-    x[sim_grid_width - 1][sim_grid_height - 1] = 0.5*(x[sim_grid_width - 2][sim_grid_height - 1] + x[sim_grid_width - 1][sim_grid_height - 2]);
+    field[0][0] = 0.5*(field[1][0] + field[0][1]);
+    field[0][sim_grid_height - 1] = 0.5*(field[1][sim_grid_height - 1] + field[0][sim_grid_height - 2]);
+    field[sim_grid_width - 1][0] = 0.5*(field[sim_grid_width - 2][0] + field[sim_grid_width - 1][1]);
+    field[sim_grid_width - 1][sim_grid_height - 1] = 0.5*(field[sim_grid_width - 2][sim_grid_height - 1] + field[sim_grid_width - 1][sim_grid_height - 2]);
 }
 
 function diffusion(b, f, f_prev, dif, dt) {
@@ -146,6 +155,7 @@ function projection(vx, vy, p, div) {
 
 function density_step(d, d_prev, vx, vy, dif, dt) {
     diffusion(0, d, d_prev, dif, dt);
+    advection(0, d, d_prev, vx, vy, dt);
 }
 
 function velocity_step() {
@@ -156,8 +166,48 @@ function simulation_step() {
     
 }
 
+
+const resize_canvas = document.createElement('canvas');
+const resize_ctx = resize_canvas.getContext('2d');
+
+function resizeImageData (imageData, width, height) {
+  const resizeWidth = width >> 0
+  const resizeHeight = height >> 0
+  const ibm = window.createImageBitmap(imageData, 0, 0, imageData.width, imageData.height, {
+    resizeWidth, resizeHeight
+  })
+  resize_canvas.width = resizeWidth
+  resize_canvas.height = resizeHeight
+  resize_ctx.scale(resizeWidth / imageData.width, resizeHeight / imageData.height)
+  resize_ctx.drawImage(ibm, 0, 0)
+  return resize_ctx.getImageData(0, 0, resizeWidth, resizeHeight)
+}
+
+var ctx_h = 1000; var ctx_w = 1000;
+//function to draw field on the canvas
+function draw_on_canvas(f, vas_ctx) {
+    var imd = vas_ctx.createImageData(sim_grid_width, sim_grid_height);
+    var idx = 0;
+    for (i=0; i<sim_grid_width; i++) {
+        for (j=0; j<sim_grid_height; j++) {
+            imd.data[idx] = 0;
+            imd.data[idx + 1] = 0;
+            imd.data[idx + 2] = 255;
+            imd.data[idx + 3] = f[i][j] / 10 * 255;
+            
+            idx += 4;
+        }
+    }
+    //resize it
+    //imd = resizeImageData(imd, 1000, 1000);
+    //draw on destination canvas
+    vas_ctx.putImageData(imd, 0, 0, 0, 0, ctx_w, ctx_h);
+}
+
 function ijs_setup() {
     main_vas = document.getElementById("main-vas");
+    main_ctx = main_vas.getContext('2d');
+    main_ctx.imageSmoothingEnabled = false;
 }
 
 document.addEventListener("DOMContentLoaded", ijs_setup);
