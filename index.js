@@ -1,6 +1,8 @@
 var main_vas;
 var main_ctx;
 
+var p;
+
 var sim_grid_width = 120;
 var sim_grid_height = 120;
 var size = sim_grid_height * sim_grid_width;
@@ -10,7 +12,11 @@ function create_field_grid() {
 }
 */
 function create_field_grid() {
-    return new Array(sim_grid_width).fill(new Array(sim_grid_height).fill(0));
+    var f = [];
+    for (i=0; i<sim_grid_width; i++) {
+        f.push(new Array(sim_grid_height).fill(0));
+    }
+    return f;
 }
 
 //the field grid for x,y velocity and density
@@ -188,6 +194,7 @@ var ctx_h = 1000; var ctx_w = 1000;
 function draw_on_canvas(f, vas_ctx) {
     var imd = vas_ctx.createImageData(sim_grid_width, sim_grid_height);
     var idx = 0;
+    var i,j;
     for (i=0; i<sim_grid_width; i++) {
         for (j=0; j<sim_grid_height; j++) {
             imd.data[idx] = 0;
@@ -204,10 +211,32 @@ function draw_on_canvas(f, vas_ctx) {
     vas_ctx.putImageData(imd, 0, 0, 0, 0, ctx_w, ctx_h);
 }
 
+function generate_random_field() {
+    var f = create_field_grid();
+    
+    var i,j;
+    for (i=0; i<sim_grid_width; i++) {
+        for (j=0; j<sim_grid_height; j++) {
+            f[i][j] = Math.random() * 10;
+        }
+    }
+    
+    return f;
+}
+
 function ijs_setup() {
     main_vas = document.getElementById("main-vas");
     main_ctx = main_vas.getContext('2d');
     main_ctx.imageSmoothingEnabled = false;
+    
+    draw_on_canvas(p, main_ctx);
+
+    setInterval(function() {
+        var p1 = create_field_grid();
+        diffusion(0, p1, p, 0.0005, 0.025);
+        p = p1;
+        draw_on_canvas(p, main_ctx);
+    }, 25);
 }
 
 document.addEventListener("DOMContentLoaded", ijs_setup);
