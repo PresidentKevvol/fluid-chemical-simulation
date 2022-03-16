@@ -29,20 +29,13 @@ var velx_prev = create_field_grid();
 var vely_prev = create_field_grid();
 var den_prev = create_field_grid();
 
-/*
-//reset the boundary to 0 after each processing
-function reset_bound(field) {
-    for (var i=0; i<sim_grid_width; i++ ) {
-        field.set(0, i, 0);
-        field.set(sim_grid_height-1, i, 0);
-    }
-    for (var i=0; i<sim_grid_height; i++ ) {
-        field.set(i, sim_grid_width, 0);
-        field.set(i, sim_grid_width-1, 0);
-    }
-}
-*/
+//placeholder arrays so simulation code don't create new ones every time needed
+var plhl_p = create_field_grid();
+var plhl_d = create_field_grid();
 
+//add source, reset boundary, diffuse, advect, and project function
+//used in the simulation
+//code cited directly from [stam 2003] and modified to javascript
 function add_source(x, s, dt) {
     for (i=1; i<sim_grid_width - 1; i++) {
         for (j=1; j<sim_grid_height - 1; j++) {
@@ -51,6 +44,7 @@ function add_source(x, s, dt) {
     }
 }
 
+//field will be changed
 function reset_bound(b, field) {
     var i, j;
     
@@ -69,6 +63,7 @@ function reset_bound(b, field) {
     field[sim_grid_width - 1][sim_grid_height - 1] = 0.5*(field[sim_grid_width - 2][sim_grid_height - 1] + field[sim_grid_width - 1][sim_grid_height - 2]);
 }
 
+//f will be changed
 function diffusion(b, f, f_prev, dif, dt) {
     var a = dt * dif * sim_grid_width * sim_grid_height;
     var i, j, k;
@@ -85,8 +80,11 @@ function diffusion(b, f, f_prev, dif, dt) {
     }
     
     reset_bound(b, f);
+
+    //return f;
 }
 
+//f will be changed
 function advection(b, f, f_prev, vel_x, vel_y, dt) {
     var x, y, s0, t0, s1, t1, dt0_x, dt0_y;
     var i, j;
@@ -125,6 +123,7 @@ function advection(b, f, f_prev, vel_x, vel_y, dt) {
     reset_bound(b, f);
 }
 
+//vx, vy will be changed
 function projection(vx, vy, p, div) {
     var i, j, k; var h = 1.0 / sim_grid_height;
 
@@ -159,13 +158,34 @@ function projection(vx, vy, p, div) {
     reset_bound(2, vy);
 }
 
-function density_step(d, d_prev, vx, vy, dif, dt) {
-    diffusion(0, d, d_prev, dif, dt);
-    advection(0, d, d_prev, vx, vy, dt);
+//d will be changed, rest unchanged
+function density_step(dif, dt) {
+    [den, den_prev] = [den_prev, den];
+    diffusion(0, den, den_prev, dif, dt);
+    
+    [den, den_prev] = [den_prev, den];
+    advection(0, den, den_prev, velx, vely, dt);
 }
 
-function velocity_step() {
-
+function velocity_step(visc, dt) {
+    //swap so the current field calculated last tick becomes previous
+    //and previous becomes current to be updated
+    [velx_prev, velx] = [velx, velx_prev];
+    [vely_prev, vely] = [vely, vely_prev];
+    //velocity diffusion
+    diffusion(1, velx, velx_prev, visc, dt);
+    diffusion(2, vely, vely_prev, visc, dt);
+    //remove flux
+    projection(velx, vely, plhl_p, plhl_d);
+    
+    //swap again
+    [velx_prev, velx] = [velx, velx_prev];
+    [vely_prev, vely] = [vely, vely_prev];
+    //velocity self advection
+    advection(1, velx, velx_prev, velx_prev, vely_prev, dt);
+    advection(2, vely, vely_prev, velx_prev, vely_prev, dt);
+    //remove flux
+    projection(velx, vely, plhl_p, plhl_d);
 }
 
 //one simulation tick
@@ -174,42 +194,39 @@ function simulation_step() {
     //get_input(); //get input from ui (optional for now?)
     velocity_step(); //evolve velocity
     density_step(); //evolve density
-    draw_on_canvas(); //draw density on canvas
+    draw_on_canvas(den, vas_ctx); //draw density array on canvas
 }
-
-
-const resize_canvas = document.createElement('canvas');
-const resize_ctx = resize_canvas.getContext('2d');
 
 var ctx_h = 1000; var ctx_w = 1000;
 //function to draw field on the canvas
-function draw_on_canvas(f, vas_ctx) {
+function draw_on_canvas(f, vas_ctx, maxval) {
     var imd = vas_ctx.createImageData(sim_grid_width, sim_grid_height);
     var idx = 0;
     var i,j;
     for (i=0; i<sim_grid_width; i++) {
         for (j=0; j<sim_grid_height; j++) {
+            var v = f[i][j];
+            v = (v > maxval) ? maxval : v;
+            
             imd.data[idx] = 0;
             imd.data[idx + 1] = 0;
             imd.data[idx + 2] = 255;
-            imd.data[idx + 3] = f[i][j] / 10 * 255;
+            imd.data[idx + 3] = f[i][j] / maxval * 255;
             
             idx += 4;
         }
     }
-    //resize it
-    //imd = resizeImageData(imd, 1000, 1000);
     //draw on destination canvas
     vas_ctx.putImageData(imd, 0, 0, 0, 0, ctx_w, ctx_h);
 }
 
-function generate_random_field() {
+function generate_random_field(minval, maxval) {
     var f = create_field_grid();
     
     var i,j;
     for (i=0; i<sim_grid_width; i++) {
         for (j=0; j<sim_grid_height; j++) {
-            f[i][j] = Math.random() * 10;
+            f[i][j] = Math.random() * (maxval - minval) + minval;
         }
     }
     
@@ -221,14 +238,16 @@ function ijs_setup() {
     main_ctx = main_vas.getContext('2d');
     main_ctx.imageSmoothingEnabled = false;
     
-    draw_on_canvas(p, main_ctx);
+    draw_on_canvas(p, main_ctx, 10);
 
-    setInterval(function() {
+    var test_sim_step = function() {
         var p1 = create_field_grid();
         diffusion(0, p1, p, 0.0005, 0.025);
         p = p1;
-        draw_on_canvas(p, main_ctx);
-    }, 25);
+        draw_on_canvas(p, main_ctx, 10);
+    };
+    
+    setInterval(test_sim_step, 25);
 }
 
 document.addEventListener("DOMContentLoaded", ijs_setup);
