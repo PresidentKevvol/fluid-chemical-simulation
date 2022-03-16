@@ -165,29 +165,21 @@ function density_step(d, d_prev, vx, vy, dif, dt) {
 }
 
 function velocity_step() {
-    
+
 }
 
+//one simulation tick
+//code cited directly from [stam 2003]
 function simulation_step() {
-    
+    //get_input(); //get input from ui (optional for now?)
+    velocity_step(); //evolve velocity
+    density_step(); //evolve density
+    draw_on_canvas(); //draw density on canvas
 }
 
 
 const resize_canvas = document.createElement('canvas');
 const resize_ctx = resize_canvas.getContext('2d');
-
-function resizeImageData (imageData, width, height) {
-  const resizeWidth = width >> 0
-  const resizeHeight = height >> 0
-  const ibm = window.createImageBitmap(imageData, 0, 0, imageData.width, imageData.height, {
-    resizeWidth, resizeHeight
-  })
-  resize_canvas.width = resizeWidth
-  resize_canvas.height = resizeHeight
-  resize_ctx.scale(resizeWidth / imageData.width, resizeHeight / imageData.height)
-  resize_ctx.drawImage(ibm, 0, 0)
-  return resize_ctx.getImageData(0, 0, resizeWidth, resizeHeight)
-}
 
 var ctx_h = 1000; var ctx_w = 1000;
 //function to draw field on the canvas
