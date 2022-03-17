@@ -40,10 +40,18 @@ var velx = create_field_grid();
 var vely = create_field_grid();
 var den = create_field_grid();
 
+var den_a = create_field_grid();
+var den_b = create_field_grid();
+var den_c = create_field_grid();
+
 //the field grid for x,y velocity and density of the previous tick
 var velx_prev = create_field_grid();
 var vely_prev = create_field_grid();
 var den_prev = create_field_grid();
+
+var den_a_prev = create_field_grid();
+var den_b_prev = create_field_grid();
+var den_c_prev = create_field_grid();
 
 //placeholder arrays so simulation code don't create new ones every time needed
 var plhl_p = create_field_grid();
@@ -259,6 +267,23 @@ function density_step(dif, dt) {
     advection(0, den, den_prev, velx, vely, dt);
 }
 
+//the simulation tick routine for multiple substances 
+function density_step_multi(dif, dt) {
+    [den_a, den_a_prev] = [den_a_prev, den_a];
+    [den_b, den_b_prev] = [den_b_prev, den_b];
+    [den_c, den_c_prev] = [den_c_prev, den_c];
+    diffusion(0, den_a, den_a_prev, dif, dt);
+    diffusion(0, den_b, den_b_prev, dif, dt);
+    diffusion(0, den_c, den_c_prev, dif, dt);
+    
+    [den_a, den_a_prev] = [den_a_prev, den_a];
+    [den_b, den_b_prev] = [den_b_prev, den_b];
+    [den_c, den_c_prev] = [den_c_prev, den_c];
+    advection(0, den_a, den_a_prev, velx, vely, dt);
+    advection(0, den_b, den_b_prev, velx, vely, dt);
+    advection(0, den_c, den_c_prev, velx, vely, dt);
+}
+
 function velocity_step(visc, dt) {
     //swap so the current field calculated last tick becomes previous
     //and previous becomes current to be updated
@@ -292,6 +317,17 @@ function simulation_step() {
     console.log("sum of density: " + sum_field(den));
 }
 
+//the simulation step for multiple chemicals
+function simulation_step_multi() {
+    //get_input(); //get input from ui (optional for now?)
+    velocity_step(dif_f, sec_per_tick); //evolve velocity
+    density_step_multi(visc_f, sec_per_tick); //evolve density
+    draw_on_canvas_multi(den_a, den_b, den_c, main_ctx, 10);   //draw density array on canvas
+    
+    //optional debug
+    //console.log("sum of density: " + sum_field(den));
+}
+
 var ctx_h = 1000; var ctx_w = 1000;
 //function to draw field on the canvas
 function draw_on_canvas(f, vas_ctx, maxval) {
@@ -313,6 +349,44 @@ function draw_on_canvas(f, vas_ctx, maxval) {
             imd.data[idx + 1] = 0;
             imd.data[idx + 2] = 255;
             imd.data[idx + 3] = v / maxval * 255;
+            
+            idx += 4;
+        }
+    }
+    //draw on destination canvas
+    vas_ctx.putImageData(imd, 0, 0, 0, 0, ctx_w, ctx_h);
+}
+
+function value_mapping(x, maxval) {
+    var v = x;
+    if (v !== 0) {
+        v = Math.log(v) + 5;
+        v = (v > maxval) ? maxval : v;
+        v = (v < 0) ? 0 : v;
+    } else {
+        v = 0;
+    }
+    return v;
+}
+
+//draw multiple substances' density on canvas
+//the chemical reaction goes:
+//A(red) + B(blue) -> C(green)
+function draw_on_canvas_multi(fa, fb, fc, vas_ctx, maxval) {
+    var imd = vas_ctx.createImageData(sim_grid_width, sim_grid_height);
+    var idx = 0;
+    var i,j, va, vb, vc;
+    for (j=0; j<sim_grid_height; j++) {
+        for (i=0; i<sim_grid_width; i++) {
+            va = value_mapping(fa[i][j], maxval);
+            vb = value_mapping(fb[i][j], maxval);
+            vc = value_mapping(fc[i][j], maxval);
+
+                        
+            imd.data[idx]     = va / maxval * 255;
+            imd.data[idx + 1] = vc / maxval * 255;
+            imd.data[idx + 2] = vb / maxval * 255;
+            imd.data[idx + 3] = 255;
             
             idx += 4;
         }
@@ -351,8 +425,9 @@ function ijs_setup() {
         draw_on_canvas(p, main_ctx, 10);
     };
     
-    draw_on_canvas(den, main_ctx, 10);
-    simulation_loop_interval = setInterval(simulation_step, 25);
+    draw_on_canvas_multi(den_a, den_b, den_c, main_ctx, 10);
+    //simulation_loop_interval = setInterval(simulation_step, 25);
+    simulation_loop_interval = setInterval(simulation_step_multi, 25);
 }
 
 document.addEventListener("DOMContentLoaded", ijs_setup);

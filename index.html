@@ -6,10 +6,21 @@
         <script src="index.js"></script>
         <style>
             body {margin: 0;}
+            #main-vas {float: left}
+            div#desc {font-family: sans-serif;}
+            div#eqn {font-size: 3em;}
+            span[c=r] {color: #f00;}
+            span[c=g] {color: #0f0;}
+            span[c=b] {color: #00f;}
+
         </style>
     </head>
     <body>
         <canvas id="main-vas" width="30" height="30" style="height: 100vh; image-rendering: pixelated; border-right: 1px solid black;"></canvas>
+        <div id="desc">
+            <div id="eqn"><span c="r">A</span> + <span c="b">B</span> &rarr; <span c="g">C</span></div>
+            
+        </div>
     </body>
     
 <!-- test codes -->
@@ -26,8 +37,8 @@ p0 = [[2, 4, 5, 3], [1, 8, 5, 2], [6, 7, 0, 8], [1, 4, 4, 1]];
 //sim_grid_width = 20;
 //sim_grid_height = 20;
 
-p = generate_random_field(0, 10);
-
+//p = generate_random_field(0, 10);
+/*
 den[4][25] = 25;
 
 den[3][25] = 12.5;
@@ -39,9 +50,9 @@ den[4][26] = 12.5;
 velx[4][25] = 5;
 velx[5][24] = 3;
 velx[6][23] = 3;
-velx[7][22] = 3;
-velx[8][21] = 3;
-velx[9][20] = 3;
+velx[7][22] = 2;
+velx[8][21] = 2;
+velx[9][20] = 1;
 
 velx[3][25] = 3.5;
 velx[5][25] = 3.5;
@@ -52,14 +63,81 @@ velx[4][26] = 3.5;
 vely[4][25] = -5;
 vely[5][24] = -3;
 vely[6][23] = -3;
-vely[7][22] = -3;
-vely[8][21] = -3;
-vely[9][20] = -3;
+vely[7][22] = -2;
+vely[8][21] = -2;
+vely[9][20] = -1;
 
 vely[3][25] = -3.5;
 vely[5][25] = -3.5;
 vely[4][24] = -3.5;
 vely[4][26] = -3.5;
+*/
+
+den_a[4][25] = 25;
+
+den_a[3][25] = 12.5;
+den_a[5][25] = 12.5;
+den_a[4][24] = 12.5;
+den_a[4][26] = 12.5;
+
+den_b[25][4] = 25;
+
+den_b[25][3] = 12.5;
+den_b[25][5] = 12.5;
+den_b[24][4] = 12.5;
+den_b[26][4] = 12.5;
+
+
+velx[4][25] = 5;
+velx[5][24] = 3;
+velx[6][23] = 3;
+velx[7][22] = 2;
+velx[8][21] = 2;
+velx[9][20] = 1;
+
+velx[3][25] = 3.5;
+velx[5][25] = 3.5;
+velx[4][24] = 3.5;
+velx[4][26] = 3.5;
+
+    
+vely[4][25] = -5;
+vely[5][24] = -3;
+vely[6][23] = -3;
+vely[7][22] = -2;
+vely[8][21] = -2;
+vely[9][20] = -1;
+
+vely[3][25] = -3.5;
+vely[5][25] = -3.5;
+vely[4][24] = -3.5;
+vely[4][26] = -3.5;
+    
+    
+velx[25][4] = -5;
+velx[24][5] = -3;
+velx[23][6] = -3;
+velx[22][7] = -2;
+velx[21][8] = -2;
+velx[20][9] = -1;
+
+velx[25][3] = -3.5;
+velx[25][5] = -3.5;
+velx[24][4] = -3.5;
+velx[26][4] = -3.5;
+
+
+vely[25][4] = 5;
+vely[24][5] = 3;
+vely[23][6] = 3;
+vely[22][7] = 2;
+vely[21][8] = 2;
+vely[20][9] = 1;
+
+vely[25][3] = 3.5;
+vely[25][5] = 3.5;
+vely[24][4] = 3.5;
+vely[26][4] = 3.5;
 
 
 </script>
