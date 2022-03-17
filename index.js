@@ -3,8 +3,14 @@ var main_ctx;
 
 var p;
 
-var sim_grid_width = 120;
-var sim_grid_height = 120;
+//the diffusion and viscosity factor
+var dif_f = 0.0004;
+var visc_f = 0.0005;
+//time of each tick i.e. dt parametr
+var sec_per_tick = 0.025;
+
+var sim_grid_width = 30;
+var sim_grid_height = 30;
 var size = sim_grid_height * sim_grid_width;
 /*
 function create_field_grid() {
@@ -17,6 +23,16 @@ function create_field_grid() {
         f.push(new Array(sim_grid_height).fill(0));
     }
     return f;
+}
+
+function sum_field(f) {
+    var res = 0;
+    for (i=0; i<sim_grid_width; i++) {
+        for (j=0; j<sim_grid_height; j++) {
+            res += f[i][j];
+        }
+    }
+    return res;
 }
 
 //the field grid for x,y velocity and density
@@ -192,9 +208,9 @@ function velocity_step(visc, dt) {
 //code cited directly from [stam 2003]
 function simulation_step() {
     //get_input(); //get input from ui (optional for now?)
-    velocity_step(); //evolve velocity
-    density_step(); //evolve density
-    draw_on_canvas(den, vas_ctx); //draw density array on canvas
+    velocity_step(dif_f, sec_per_tick); //evolve velocity
+    density_step(visc_f, sec_per_tick); //evolve density
+    draw_on_canvas(den, main_ctx, 10);   //draw density array on canvas
 }
 
 var ctx_h = 1000; var ctx_w = 1000;
@@ -206,12 +222,19 @@ function draw_on_canvas(f, vas_ctx, maxval) {
     for (i=0; i<sim_grid_width; i++) {
         for (j=0; j<sim_grid_height; j++) {
             var v = f[i][j];
-            v = (v > maxval) ? maxval : v;
+            if (v !== 0) {
+                v = Math.log(v) + 5;
+                v = (v > maxval) ? maxval : v;
+                v = (v < 0) ? 0 : v;
+            } else {
+                v = 0;
+            }
+            
             
             imd.data[idx] = 0;
             imd.data[idx + 1] = 0;
             imd.data[idx + 2] = 255;
-            imd.data[idx + 3] = f[i][j] / maxval * 255;
+            imd.data[idx + 3] = v / maxval * 255;
             
             idx += 4;
         }
@@ -233,12 +256,15 @@ function generate_random_field(minval, maxval) {
     return f;
 }
 
+//the js interval object for the simulation loop
+var simulation_loop_interval;
+
 function ijs_setup() {
     main_vas = document.getElementById("main-vas");
     main_ctx = main_vas.getContext('2d');
     main_ctx.imageSmoothingEnabled = false;
     
-    draw_on_canvas(p, main_ctx, 10);
+    //draw_on_canvas(p, main_ctx, 10);
 
     var test_sim_step = function() {
         var p1 = create_field_grid();
@@ -247,7 +273,8 @@ function ijs_setup() {
         draw_on_canvas(p, main_ctx, 10);
     };
     
-    setInterval(test_sim_step, 25);
+    draw_on_canvas(den, main_ctx, 10);
+    simulation_loop_interval = setInterval(simulation_step, 25);
 }
 
 document.addEventListener("DOMContentLoaded", ijs_setup);

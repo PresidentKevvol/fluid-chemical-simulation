@@ -9,7 +9,7 @@
         </style>
     </head>
     <body>
-        <canvas id="main-vas" width="20" height="20" style="height: 100vh; image-rendering: pixelated;"></canvas>
+        <canvas id="main-vas" width="30" height="30" style="height: 100vh; image-rendering: pixelated;"></canvas>
     </body>
     
 <!-- test codes -->
@@ -23,10 +23,44 @@ p = [[2, 4, 5, 3], [1, 8, 5, 2], [6, 7, 0, 8], [1, 4, 4, 1]];
 p0 = [[2, 4, 5, 3], [1, 8, 5, 2], [6, 7, 0, 8], [1, 4, 4, 1]];
 */
 
-sim_grid_width = 20;
-sim_grid_height = 20;
+//sim_grid_width = 20;
+//sim_grid_height = 20;
 
 p = generate_random_field(0, 10);
+
+den[4][24] = 25;
+
+den[3][24] = 12.5;
+den[5][24] = 12.5;
+den[4][23] = 12.5;
+den[4][25] = 12.5;
+
+
+velx[4][24] = 5;
+velx[5][23] = 3;
+velx[6][22] = 3;
+velx[7][21] = 3;
+velx[8][20] = 3;
+velx[9][19] = 3;
+
+velx[3][24] = 3.5;
+velx[5][24] = 3.5;
+velx[4][23] = 3.5;
+velx[4][25] = 3.5;
+
     
+vely[4][24] = -5;
+vely[5][23] = -3;
+vely[6][22] = -3;
+vely[7][21] = -3;
+vely[8][20] = -3;
+vely[9][19] = -3;
+
+vely[3][24] = -3.5;
+vely[5][24] = -3.5;
+vely[4][23] = -3.5;
+vely[4][25] = -3.5;
+
+
 </script>
 </html>
