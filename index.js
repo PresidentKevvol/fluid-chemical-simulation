@@ -97,7 +97,7 @@ function diffusion(b, f, f_prev, dif, dt) {
                 f[i][j]= new_val;
             }
         }
-        
+        /*
         m = sim_grid_height - 1;
         for (i=1; i<sim_grid_width - 1; i++) {
             f[i][0] = ( f_prev[i][0] + a * (f[i][1] + f[i-1][0] + f[i+1][0]) ) / (1 + 3*a);
@@ -114,9 +114,12 @@ function diffusion(b, f, f_prev, dif, dt) {
         f[n][0] = ( f_prev[n][0] + a * (f[n-1][0] + f[n][1]) ) / (1 + 2*a);
         f[0][m] = ( f_prev[0][m] + a * (f[1][m] + f[0][m-1]) ) / (1 + 2*a);
         f[n][m] = ( f_prev[n][m] + a * (f[n-1][m] + f[n][m-1]) ) / (1 + 2*a);
+        */
+    
+        reset_bound(b, f);
     }
     
-    reset_bound(b, f);
+    
 
     //return f;
 }
@@ -250,10 +253,10 @@ function projection(vx, vy, p, div) {
 //d will be changed, rest unchanged
 function density_step(dif, dt) {
     [den, den_prev] = [den_prev, den];
-    diffusion(-1, den, den_prev, dif, dt);
+    diffusion(0, den, den_prev, dif, dt);
     
     [den, den_prev] = [den_prev, den];
-    advection(-1, den, den_prev, velx, vely, dt);
+    advection(0, den, den_prev, velx, vely, dt);
 }
 
 function velocity_step(visc, dt) {
@@ -286,7 +289,7 @@ function simulation_step() {
     draw_on_canvas(den, main_ctx, 10);   //draw density array on canvas
     
     //optional debug
-    //console.log("sum of density: " + sum_field(den));
+    console.log("sum of density: " + sum_field(den));
 }
 
 var ctx_h = 1000; var ctx_w = 1000;
