@@ -305,6 +305,28 @@ function velocity_step(visc, dt) {
     projection(velx, vely, plhl_p, plhl_d);
 }
 
+//the reaction is 2nd degree wrt A and 1st degree for b
+function reaction_rate(a, b) {
+    return 14.25 * a * a * b;
+}
+
+function reaction_step(fa, fb, fc, dt) {
+    var i, j, amt, lm;
+    for (i=0; i<sim_grid_width; i++) {
+        for (j=0; j<sim_grid_height; j++) {
+            //amount of A and B reacted = rate * time
+            amt = reaction_rate(fa[i][j], fb[i][j]) * dt;
+            //see if any limited reagent (can't have more reaction than reactants)
+            lm = Math.min(fa[i][j], fb[i][j]);
+            amt = Math.min(lm, amt);
+            //now subtract from A and B and add to C
+            fa[i][j] -= amt;
+            fb[i][j] -= amt;
+            fc[i][j] += amt;
+        }
+    }
+}
+
 //one simulation tick
 //code cited directly from [stam 2003]
 function simulation_step() {
@@ -322,6 +344,8 @@ function simulation_step_multi() {
     //get_input(); //get input from ui (optional for now?)
     velocity_step(dif_f, sec_per_tick); //evolve velocity
     density_step_multi(visc_f, sec_per_tick); //evolve density
+    reaction_step(den_a, den_b, den_c, sec_per_tick); //simulate reaction
+    
     draw_on_canvas_multi(den_a, den_b, den_c, main_ctx, 10);   //draw density array on canvas
     
     //optional debug
