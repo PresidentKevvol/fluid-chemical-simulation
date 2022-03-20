@@ -59,3 +59,28 @@ const reset_bound_gpu = gpu.createKernel(reset_bound_krnl, {
   constants: { grid_width: sim_grid_width, grid_height: sim_grid_height },
   output: [sim_grid_width, sim_grid_height],
 });
+
+function diffusion_step_krnl(a, f, f0) {
+    var i = this.thread.y;
+    var j = this.thread.x;
+    
+    var new_val = ( f_prev[i][j] + a * (f[i][j-1] + f[i][j+1] + f[i-1][j] + f[i+1][j]) ) / (1 + 4*a);
+    return new_val;
+}
+
+const diffusion_step_gpu = gpu.createKernel(diffusion_step_krnl, {
+  constants: { grid_width: sim_grid_width, grid_height: sim_grid_height },
+  output: [sim_grid_width, sim_grid_height],
+});
+
+function diffusion_gpu(b, f, f0, dif, dt) {
+    var a = dt * dif * sim_grid_width * sim_grid_height;
+    var k;
+    
+    for (k=0; k<20; k++) {
+        f = diffusion_step_gpu(a, f, f0);
+        reset_bound_gpu(b, f);
+    }
+    
+    return f;
+}
