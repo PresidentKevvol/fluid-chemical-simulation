@@ -108,9 +108,11 @@ function advection_krnl(f0, vx, vy, dt, dt0_x, dt0_y) {
     var h = this.constants.grid_height;
     var scan_lim2 = this.constants.scan_lim2;
     
+    /*
     if (i === 0 || j === 0 || i === w-1 || j === h-1) {
         return 0;
     }
+    */
     
     var res = 0;
 
@@ -127,13 +129,13 @@ function advection_krnl(f0, vx, vy, dt, dt0_x, dt0_y) {
     
     for (var ict=0; ict<=scan_lim2; ict++) {
         
-        if (i - scan_lim + ict < 0 || i - scan_lim + ict >= w) {
+        if (i - scan_lim + ict < 1 || i - scan_lim + ict >= w-1) {
             continue;
         }
         
         for (var jct=0; jct<=scan_lim2; jct++) {
             
-            if (j - scan_lim + jct < 0 || j - scan_lim + jct >= h) {
+            if (j - scan_lim + jct < 1 || j - scan_lim + jct >= h-1) {
                 continue;
             }            
             

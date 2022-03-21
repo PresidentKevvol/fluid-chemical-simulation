@@ -87,6 +87,10 @@ function floor_all(f) {
 }
 
 function clone(f) {
+    if (typeof f[0] === 'undefined') {
+        return f.toArray();
+    }
+    
     var r = create_field_grid();
     for (i=1; i<sim_grid_width - 1; i++) {
         for (j=1; j<sim_grid_height - 1; j++) {

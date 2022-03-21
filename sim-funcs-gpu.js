@@ -1,10 +1,7 @@
 function density_step_gpu(dif, dt) {
     den = diffusion_gpu(0, den, dif, dt);
     
-    //den = advection_gpu(0, den, velx, vely, dt);
-    var d1 = create_field_grid();
-    advection(0, d1, den.toArray(), velx.toArray(), vely.toArray(), dt);
-    den = d1;
+    den = advection_gpu(0, den, velx, vely, dt);
 }
 
 function velocity_step_gpu(visc, dt) {
@@ -15,12 +12,9 @@ function velocity_step_gpu(visc, dt) {
     [velx, vely] = projection_gpu(velx, vely);
     
     //velocity self advection
-//    var velx_1 = advection_gpu(1, velx, velx, vely, dt);
-//    var vely_1 = advection_gpu(2, vely, velx, vely, dt);
-    var velx_1 = create_field_grid();
-    var vely_1 = create_field_grid();
-    advection(1, velx_1, velx.toArray(), velx.toArray(), vely.toArray(), dt);
-    advection(2, vely_1, vely.toArray(), velx.toArray(), vely.toArray(), dt);
+    var velx_1 = advection_gpu(1, velx, velx, vely, dt);
+    var vely_1 = advection_gpu(2, vely, velx, vely, dt);
+    
     //remove flux
     [velx, vely] = projection_gpu(velx_1, vely_1);
     
@@ -41,6 +35,7 @@ function simulation_step_gpu() {
     density_step_gpu(visc_f, sec_per_tick); //evolve density
     gpu_draw_on_canvas(den, 10);   //draw density array on canvas
     
+
     //snapshots.push([clone(den), clone(velx), clone(vely)]);
     
     var endTime = performance.now();
