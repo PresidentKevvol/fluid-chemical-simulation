@@ -68,9 +68,32 @@ function ijs_setup() {
     document.getElementById('canvas-space').appendChild(main_vas);
     
     //main_vas.setAttribute("width", sim_grid_width);
-    
-    //simulation_loop_interval = setInterval(simulation_step_gpu, 40);
+
+//    for (var b=0; b<100; b++) {
+//        simulation_step_gpu();
+//    }
+    simulation_loop_interval = setInterval(simulation_step_gpu, 100);
     //simulation_loop_interval = setInterval(simulation_step_multi, 25);
+}
+
+function floor_all(f) {
+    var r = create_field_grid();
+    for (i=1; i<sim_grid_width - 1; i++) {
+        for (j=1; j<sim_grid_height - 1; j++) {
+            r[i][j] = Math.floor(f[i][j]);
+        }
+    }
+    return r;
+}
+
+function clone(f) {
+    var r = create_field_grid();
+    for (i=1; i<sim_grid_width - 1; i++) {
+        for (j=1; j<sim_grid_height - 1; j++) {
+            r[i][j] = f[i][j];
+        }
+    }
+    return r;
 }
 
 document.addEventListener("DOMContentLoaded", ijs_setup);

@@ -1,6 +1,6 @@
 //the diffusion and viscosity factor
-var dif_f = 0.0002;
-var visc_f = 0.00025;
+var dif_f = 0.0004;
+var visc_f = 0.0005;
 //time of each tick i.e. dt parametr
 var sec_per_tick = 0.025;
 

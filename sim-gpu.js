@@ -23,11 +23,11 @@ var use_pipeline = true;
 
 const empty_field_gpu = gpu.createKernel(function() {return 0;}, {
   output: [sim_grid_width, sim_grid_height],
-}).setPipeline(true).setImmutable(true);
+}).setPipeline(use_pipeline).setImmutable(true);
 
 const to_gpu_texture = gpu.createKernel(function(f) {return f[this.thread.y][this.thread.x];}, {
   output: [sim_grid_width, sim_grid_height],
-}).setPipeline(true).setImmutable(true);
+}).setPipeline(use_pipeline).setImmutable(true);
 
 function reset_bound_krnl(b, field){
     if (b === -1) { //if bound type == -1, do nothing
@@ -284,7 +284,7 @@ function projection_gpu(vx, vy) {
     vx = projection_vx_subtract_gpu(vx, p, div, h);
     vy = projection_vy_subtract_gpu(vy, p, div, h);
     
-    p.delete();
+    //p.delete();
 
     return [vx, vy];
 }
