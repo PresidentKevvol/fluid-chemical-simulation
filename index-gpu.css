@@ -12,18 +12,29 @@ div#canvas-space canvas {
     image-rendering: pixelated;
 
     position: absolute;
+    position: relative;
+}
+
+div#ttl {
+    font-size: 1.5em;
 }
 
 div#desc {
     font-family: sans-serif;
     font-size: 1.3em; 
-    margin-left: 2em; 
+    margin-left: 1.5em;
+    margin-top: 1.5em;
     float: left;
+    position: relative;
 }
 
 div#eqn {
     font-size: 1.7em;
 }
 span[c=r] {color: #f00;}
-span[c=g] {color: #0f0;}
+span[c=g] {color: #090;}
 span[c=b] {color: #00f;}
+
+button#start-sim {
+    font-size: 1.25em;
+}

@@ -180,7 +180,8 @@ function advection_krnl(f0, vx, vy, dt, dt0_x, dt0_y) {
 }
 
 const advection_step_gpu = gpu.createKernel(advection_krnl, {
-  constants: { grid_width: sim_grid_width, grid_height: sim_grid_height, scan_lim2: 11 },
+  constants: { grid_width: sim_grid_width, grid_height: sim_grid_height,
+               scan_lim2: Math.ceil(5 * sec_per_tick * sim_grid_height) * 2 + 1},
   output: [sim_grid_width, sim_grid_height],
 }).setPipeline(use_pipeline).setImmutable(true);
 
@@ -286,11 +287,64 @@ function projection_gpu(vx, vy) {
     vx = projection_vx_subtract_gpu(vx, p, div, h);
     vy = projection_vy_subtract_gpu(vy, p, div, h);
     
-    //p.delete();
+    p.delete();
+    div.delete();
 
     return [vx, vy];
 }
 
-function reaction_rate_krnl() {
-    
+/*
+Michaelis-Menten equation
+rate = k_2 * E * S / (S + k_M)
+*/
+function rate_law(E, S) {
+    return 1.226 * E * S / (S + 3.05);
 }
+
+gpu.addFunction(rate_law);
+
+function reaction_rate_krnl(fa, fb, dt) {
+    var i = this.thread.y;
+    var j = this.thread.x;
+    var w = this.constants.grid_width;
+    var h = this.constants.grid_height;
+    
+    //the whole grid is 1 liter
+    //thus the volume of each cell is 1.0 / w / h
+    //therefore the concentration in each cell is:
+    //amount / (1.0 / w / h) = amount * w * h
+    var da = fa[i][j] * w * h;
+    var db = fb[i][j] * w * h;
+    
+    var rate = rate_law(db, da) * dt;
+    
+    return Math.min(rate, da) / (w * h);
+}
+
+const reaction_rate_gpu = gpu.createKernel(reaction_rate_krnl, {
+  constants: { grid_width: sim_grid_width, grid_height: sim_grid_height },
+  output: [sim_grid_width, sim_grid_height],
+}).setPipeline(use_pipeline).setImmutable(true);
+
+function addition_krnl(a, b) {
+    var i = this.thread.y;
+    var j = this.thread.x;
+    
+    return a[i][j] + b[i][j];
+}
+function subtraction_krnl(a, b) {
+    var i = this.thread.y;
+    var j = this.thread.x;
+    
+    return a[i][j] - b[i][j];
+}
+
+const addition_gpu = gpu.createKernel(addition_krnl, {
+  constants: { grid_width: sim_grid_width, grid_height: sim_grid_height },
+  output: [sim_grid_width, sim_grid_height],
+}).setPipeline(use_pipeline).setImmutable(true);
+
+const subtraction_gpu = gpu.createKernel(subtraction_krnl, {
+  constants: { grid_width: sim_grid_width, grid_height: sim_grid_height },
+  output: [sim_grid_width, sim_grid_height],
+}).setPipeline(use_pipeline).setImmutable(true);

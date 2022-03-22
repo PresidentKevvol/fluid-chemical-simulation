@@ -11,10 +11,47 @@
         <script src="sim-funcs-gpu.js"></script>
         
         <script src="index-gpu.js"></script>
+    
+        <!-- mathjax for displaying equations -->
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
         
         <link rel="stylesheet" href="index-gpu.css">
     </head>
     <body>
         <div id="canvas-space"></div>
+        
+        <div id="desc">
+            <div id="ttl">
+                Fluid-Chemical dynamics simulation on GPU
+            </div>
+            
+            <br>
+            
+            <div>Reaction equation:</div>
+            <div id="eqn">
+                <span c="r">A</span> &rarr; <span c="b">C</span> (catalyst: <span c="g">B</span>)
+            </div>
+            <br>
+            <div>
+                Reaction rate: <br>
+                Reaction rate follows the Michaelis-Menten equation
+            </div>
+            <br>
+            <div id="eqn">
+                \( rate = \frac{k_{2}[\textcolor{green}{B}][\textcolor{red}{A}]}{[\textcolor{red}{A}] + K_{M}} \)
+                <br>
+                \( \frac{d[\textcolor{red}{A}]}{dt} = -rate, \)
+                \( \frac{d[\textcolor{blue}{C}]}{dt} = rate \)
+            </div>
+            <br>
+            (\(k_{2}\) = 1.226,  \(k_{M}\) = 3.05)
+            
+            <br>
+            <br>
+            
+            <button id="start-sim">Start simulation</button>
+            
+        </div>
     </body>
 </html>

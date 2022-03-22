@@ -22,40 +22,96 @@ var den_b_prev = create_field_grid();
 var den_c_prev = create_field_grid();
 
 //test code
-den[4][25] = 25;
+a_orig_x = 40;
+a_orig_y = 74;
 
-den[3][25] = 12.5;
-den[5][25] = 12.5;
-den[4][24] = 12.5;
-den[4][26] = 12.5;
+den_a[a_orig_x    ][a_orig_y    ] = 25;
+
+den_a[a_orig_x - 1][a_orig_y    ] = 12.5;
+den_a[a_orig_x + 1][a_orig_y    ] = 12.5;
+den_a[a_orig_x    ][a_orig_y - 1] = 12.5;
+den_a[a_orig_x    ][a_orig_y + 1] = 12.5;
 
 
-velx[4][25] = 5;
-velx[5][24] = 3;
-velx[6][23] = 3;
-velx[7][22] = 2;
-velx[8][21] = 2;
-velx[9][20] = 1;
+velx[a_orig_x    ][a_orig_y    ] = 5;
+velx[a_orig_x + 1][a_orig_y - 1] = 3;
+velx[a_orig_x + 2][a_orig_y - 2] = 3;
+velx[a_orig_x + 3][a_orig_y - 3] = 2;
+velx[a_orig_x + 4][a_orig_y - 4] = 2;
+velx[a_orig_x + 5][a_orig_y - 5] = 1;
 
-velx[3][25] = 3.5;
-velx[5][25] = 3.5;
-velx[4][24] = 3.5;
-velx[4][26] = 3.5;
+velx[a_orig_x - 1][a_orig_y    ] = 3.5;
+velx[a_orig_x + 1][a_orig_y    ] = 3.5;
+velx[a_orig_x    ][a_orig_y - 1] = 3.5;
+velx[a_orig_x    ][a_orig_y + 1] = 3.5;
 
-    
-vely[4][25] = -5;
-vely[5][24] = -3;
-vely[6][23] = -3;
-vely[7][22] = -2;
-vely[8][21] = -2;
-vely[9][20] = -1;
 
-vely[3][25] = -3.5;
-vely[5][25] = -3.5;
-vely[4][24] = -3.5;
-vely[4][26] = -3.5;
+vely[a_orig_x    ][a_orig_y    ] = -5;
+vely[a_orig_x + 1][a_orig_y - 1] = -3;
+vely[a_orig_x + 2][a_orig_y - 2] = -3;
+vely[a_orig_x + 3][a_orig_y - 3] = -2;
+vely[a_orig_x + 4][a_orig_y - 4] = -2;
+vely[a_orig_x + 5][a_orig_y - 5] = -1;
 
-den = to_gpu_texture(den);
+vely[a_orig_x - 1][a_orig_y    ] = -3.5;
+vely[a_orig_x + 1][a_orig_y    ] = -3.5;
+vely[a_orig_x    ][a_orig_y - 1] = -3.5;
+vely[a_orig_x    ][a_orig_y + 1] = -3.5;
+
+
+b_orig_x = 78;
+b_orig_y = 44;
+
+den_b[b_orig_x    ][b_orig_y    ] = 25;
+
+den_b[b_orig_x - 1][b_orig_y    ] = 12.5;
+den_b[b_orig_x + 1][b_orig_y    ] = 12.5;
+den_b[b_orig_x    ][b_orig_y - 1] = 12.5;
+den_b[b_orig_x    ][b_orig_y + 1] = 12.5;
+
+
+velx[b_orig_x    ][b_orig_y    ] = -5;
+velx[b_orig_x - 1][b_orig_y + 1] = -3;
+velx[b_orig_x - 2][b_orig_y + 2] = -3;
+velx[b_orig_x - 3][b_orig_y + 3] = -2;
+velx[b_orig_x - 4][b_orig_y + 4] = -2;
+velx[b_orig_x - 5][b_orig_y + 5] = -1;
+
+velx[b_orig_x - 1][b_orig_y    ] = -3.5;
+velx[b_orig_x + 1][b_orig_y    ] = -3.5;
+velx[b_orig_x    ][b_orig_y - 1] = -3.5;
+velx[b_orig_x    ][b_orig_y + 1] = -3.5;
+
+
+vely[b_orig_x    ][b_orig_y    ] = 5;
+vely[b_orig_x - 1][b_orig_y + 1] = 3;
+vely[b_orig_x - 2][b_orig_y + 2] = 3;
+vely[b_orig_x - 3][b_orig_y + 3] = 2;
+vely[b_orig_x - 4][b_orig_y + 4] = 2;
+vely[b_orig_x - 5][b_orig_y + 5] = 1;
+
+vely[b_orig_x - 1][b_orig_y    ] = 3.5;
+vely[b_orig_x + 1][b_orig_y    ] = 3.5;
+vely[b_orig_x    ][b_orig_y - 1] = 3.5;
+vely[b_orig_x    ][b_orig_y + 1] = 3.5;
+
+/*
+den_b[b_orig_x   ][b_orig_y] = 75;
+
+velx[b_orig_x    ][b_orig_y] = -4;
+velx[b_orig_x - 1][b_orig_y] = -4;
+velx[b_orig_x - 2][b_orig_y] = -3;
+velx[b_orig_x - 3][b_orig_y] = -2;
+velx[b_orig_x - 4][b_orig_y] = -1;
+velx[b_orig_x - 5][b_orig_y] = -1;
+
+*/
+
+
+
+den_a = to_gpu_texture(den_a);
+den_b = to_gpu_texture(den_b);
+den_c = to_gpu_texture(den_c);
 velx = to_gpu_texture(velx);
 vely = to_gpu_texture(vely);
 
@@ -72,8 +128,20 @@ function ijs_setup() {
 //    for (var b=0; b<100; b++) {
 //        simulation_step_gpu();
 //    }
-    simulation_loop_interval = setInterval(simulation_step_gpu, 100);
+
     //simulation_loop_interval = setInterval(simulation_step_multi, 25);
+    
+    simulation_step_multi_gpu();
+    gpu_draw_on_canvas_multi(den_a, den_b, den_c, 10);
+    
+    document.getElementById("start-sim").addEventListener("click", start_simulation);
+}
+
+function start_simulation() {
+    simulation_step_multi_gpu();
+    
+    simulation_loop_interval = setInterval(simulation_step_multi_gpu, 75);
+    window.requestAnimationFrame(simulation_step_multi_gpu_anim_frame);
 }
 
 function floor_all(f) {
