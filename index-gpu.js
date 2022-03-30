@@ -23,7 +23,7 @@ var den_c_prev = create_field_grid();
 
 //test code
 a_orig_x = 40;
-a_orig_y = 74;
+a_orig_y = 78;
 
 den_a[a_orig_x    ][a_orig_y    ] = 25;
 
@@ -60,7 +60,7 @@ vely[a_orig_x    ][a_orig_y + 1] = -3.5;
 
 
 b_orig_x = 78;
-b_orig_y = 44;
+b_orig_y = 41;
 
 den_b[b_orig_x    ][b_orig_y    ] = 25;
 
