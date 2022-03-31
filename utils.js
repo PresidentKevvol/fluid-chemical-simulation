@@ -55,6 +55,18 @@ function value_mapping_2(x, min, max) {
     return v;
 }
 
+//map x from (0, max) to (0, 1)
+function value_mapping_3(x, max) {
+    var v = x;
+    if (v > 0) {
+        v = (v > max) ? max : v;
+        v /= max;
+    } else {
+        v = 0;
+    }
+    return v;
+}
+
 //gpu kernel creator
 
 var gpu = new GPU();

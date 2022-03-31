@@ -1,4 +1,5 @@
 gpu.addFunction(value_mapping_2);
+gpu.addFunction(value_mapping_3);
 
 function draw_on_canvas_bz_krnl(fx, fy, fz, min, max) {
     var i = this.thread.y;
@@ -7,10 +8,16 @@ function draw_on_canvas_bz_krnl(fx, fy, fz, min, max) {
     var vx = fx[i][j];
     var vy = fy[i][j];
     var vz = fz[i][j];
-
+    
+    /*
     vx = value_mapping_2(vx, min, max);
     vy = value_mapping_2(vy, min, max);
     vz = value_mapping_2(vz, min, max);
+    */
+    
+    vx = value_mapping_3(vx, 0.001);
+    vy = value_mapping_3(vy, 0.12);
+    vz = value_mapping_3(vz, 0.003);
     
     this.color(vx, vy, vz, 1);
 }
