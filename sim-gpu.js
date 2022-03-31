@@ -1,5 +1,3 @@
-var gpu = new GPU();
-
 //test
 p = [[2, 4, 5, 3], [1, 8, 5, 2], [6, 7, 0, 8], [1, 4, 4, 1]];
 p0 = [[2, 4, 5, 3], [1, 8, 5, 2], [6, 7, 0, 8], [1, 4, 4, 1]];
@@ -322,29 +320,6 @@ function reaction_rate_krnl(fa, fb, dt) {
 }
 
 const reaction_rate_gpu = gpu.createKernel(reaction_rate_krnl, {
-  constants: { grid_width: sim_grid_width, grid_height: sim_grid_height },
-  output: [sim_grid_width, sim_grid_height],
-}).setPipeline(use_pipeline).setImmutable(true);
-
-function addition_krnl(a, b) {
-    var i = this.thread.y;
-    var j = this.thread.x;
-    
-    return a[i][j] + b[i][j];
-}
-function subtraction_krnl(a, b) {
-    var i = this.thread.y;
-    var j = this.thread.x;
-    
-    return a[i][j] - b[i][j];
-}
-
-const addition_gpu = gpu.createKernel(addition_krnl, {
-  constants: { grid_width: sim_grid_width, grid_height: sim_grid_height },
-  output: [sim_grid_width, sim_grid_height],
-}).setPipeline(use_pipeline).setImmutable(true);
-
-const subtraction_gpu = gpu.createKernel(subtraction_krnl, {
   constants: { grid_width: sim_grid_width, grid_height: sim_grid_height },
   output: [sim_grid_width, sim_grid_height],
 }).setPipeline(use_pipeline).setImmutable(true);

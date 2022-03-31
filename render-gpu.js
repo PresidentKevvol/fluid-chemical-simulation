@@ -35,7 +35,7 @@ const gpu_draw_on_canvas_multi = gpu.createKernel(draw_on_canvas_multi_krnl, {
 }).setGraphical(true);
 
 
-const gpu_draw_canvas = gpu_draw_on_canvas_multi.canvas;
+const gpu_draw_canvas = gpu_draw_on_canvas.canvas;
 
 
 function draw_on_canvas_krnl_t(f, maxval) {

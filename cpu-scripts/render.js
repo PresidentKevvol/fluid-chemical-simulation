@@ -26,18 +26,6 @@ function draw_on_canvas(f, vas_ctx, maxval) {
     vas_ctx.putImageData(imd, 0, 0);
 }
 
-function value_mapping(x, maxval) {
-    var v = x;
-    if (v !== 0) {
-        v = Math.log(v) + 5;
-        v = (v > maxval) ? maxval : v;
-        v = (v < 0) ? 0 : v;
-    } else {
-        v = 0;
-    }
-    return v;
-}
-
 //draw multiple substances' density on canvas
 //the chemical reaction goes:
 //A(red) + B(blue) -> C(green)

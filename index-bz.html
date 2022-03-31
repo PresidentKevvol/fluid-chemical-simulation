@@ -1,17 +1,16 @@
 <html>
     <head>
         <script src="gpu-browser.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>v
+        <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
         
         <script src="constants-2.js"></script>
         <script src="utils.js"></script>
-        <script src="sim-cpu.js"></script>
         <script src="sim-gpu.js"></script>
-        <script src="render.js"></script>
-        <script src="render-gpu.js"></script>
         <script src="sim-funcs-gpu.js"></script>
+        <script src="bz-scripts/bz-reaction.js"></script>
+        <script src="bz-scripts/bz-funcs-render.js"></script>
         
-        <script src="index-gpu.js"></script>
+        <script src="bz-scripts/index-bz.js"></script>
     
         <!-- mathjax for displaying equations -->
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -24,29 +23,29 @@
         
         <div id="desc">
             <div id="ttl">
-                Fluid-Chemical dynamics simulation on GPU
+                Fluid-Chemical dynamics simulation on GPU<br>
+                B-Z reaction
             </div>
             
             <br>
             
             <div>Reaction equation:</div>
             <div id="eqn">
-                <span c="r">A</span> &rarr; <span c="b">C</span> (catalyst: <span c="g">B</span>)
+                A  + Y &rarr; X  + P <br>
+                X  + Y &rarr; 2P     <br>
+                A  + X &rarr; 2X + 2Z<br>
+                2X     &rarr; A  + P <br>
+                B  + Z &rarr; Y      <br>
             </div>
             <br>
             <div>
                 Reaction rate: <br>
-                Reaction rate follows the Michaelis-Menten equation
             </div>
             <br>
             <div id="eqn">
-                \( rate = \frac{k_{2}[\textcolor{green}{B}][\textcolor{red}{A}]}{[\textcolor{red}{A}] + K_{M}} \)
-                <br>
-                \( \frac{d[\textcolor{red}{A}]}{dt} = -rate, \)
-                \( \frac{d[\textcolor{blue}{C}]}{dt} = rate \)
+                tbd
             </div>
             <br>
-            (\(k_{2}\) = 1.226,  \(k_{M}\) = 3.05)
             
             <br>
             <br>
