@@ -11,7 +11,6 @@ div#canvas-space canvas {
     height: 100vh;
     image-rendering: pixelated;
 
-    position: absolute;
     position: relative;
 }
 
@@ -22,8 +21,8 @@ div#ttl {
 div#desc {
     font-family: sans-serif;
     font-size: 1.3em; 
-    margin-left: 1.5em;
-    margin-top: 1.5em;
+    padding-left: 1.5em;
+    padding-top: 1.5em;
     float: left;
     position: relative;
 }
@@ -37,4 +36,8 @@ span[c=b] {color: #00f;}
 
 button#start-sim {
     font-size: 1.25em;
+}
+
+.message {
+    color: crimson;
 }
