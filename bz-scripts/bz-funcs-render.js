@@ -15,9 +15,9 @@ function draw_on_canvas_bz_krnl(fx, fy, fz, min, max) {
     vz = value_mapping_2(vz, min, max);
     */
     
-    vx = value_mapping_3(vx, 0.001);
+    vx = (vx > -16) ? value_mapping_3(vx, 0.001) : 1;
     vy = value_mapping_3(vy, 0.12);
-    vz = value_mapping_3(vz, 0.003);
+    vz = value_mapping_3(vz, 0.004);
     
     this.color(vx, vy, vz, 1);
 }
@@ -62,6 +62,8 @@ var previousTimeStamp;
 var last_bottleneck;
 var elapsed;
 
+var playing = false;
+
 function simulation_step_bz_anim_frame(ts) {
     elapsed = ts - previousTimeStamp;
     
@@ -78,5 +80,7 @@ function simulation_step_bz_anim_frame(ts) {
     previousTimeStamp = ts;
     frame_ct++;
     
-    window.requestAnimationFrame(simulation_step_bz_anim_frame);
+    if (playing) {
+        window.requestAnimationFrame(simulation_step_bz_anim_frame);
+    }
 }

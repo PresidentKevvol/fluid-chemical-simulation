@@ -20,14 +20,33 @@ function ijs_setup() {
     simulation_step_bz();
     gpu_draw_on_canvas_bz(den_X, den_Y, den_Z, -6, 0);
     
-    document.getElementById("start-sim").addEventListener("click", start_simulation);
+    //document.getElementById("start-sim").addEventListener("click", start_simulation);
+    document.getElementById("start-sim").addEventListener("click", start_btn_clicked);
+}
+
+function start_btn_clicked(event) {
+    if (!playing) {
+        start_simulation();
+        event.target.innerHTML = "pause simulation";
+    } else {
+        pause_simulation();
+        event.target.innerHTML = "resume simulation";
+    }
 }
 
 function start_simulation() {
     simulation_step_bz();
     
     simulation_loop_interval = setInterval(simulation_step_bz, 75);
+    
+    playing = true;
     window.requestAnimationFrame(simulation_step_bz_anim_frame);
+}
+
+function pause_simulation() {
+    clearInterval(simulation_loop_interval);
+    
+    playing = false;
 }
 
 document.addEventListener("DOMContentLoaded", ijs_setup);

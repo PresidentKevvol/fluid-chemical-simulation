@@ -12,9 +12,13 @@ B  + Z -> Y
 
 //reaction rate constants
 var k1 = 1.28;
-var k2 = 2.4E6;
+//var k2 = 2.4E6;
+var k2 = 2.4E3;
+
 var k3 = 33.6;
-var k4 = 3000;
+//var k4 = 3000;
+var k4 = 100;
+
 var kc = 1;
 
 function gen_noise(m, r, rng) {
@@ -34,12 +38,12 @@ var rng = new Math.seedrandom('chemistry is fun');
 
 //thus, we will create these 6 fields with a random noise in these ranges
 
-var den_A = gen_noise(0.06, 0.005, rng);
-var den_B = gen_noise(0.02, 0.0015, rng);
+var den_A = gen_noise(0.06, 0.008, rng);
+var den_B = gen_noise(0.02, 0.002, rng);
 var den_P = gen_noise(0.0, 0.0, rng);
 var den_X = gen_noise(0.0, 0.0, rng);
-var den_Y = gen_noise(0.05, 0.004, rng);
-var den_Z = gen_noise(0.002, 0.0003, rng);
+var den_Y = gen_noise(0.05, 0.03, rng);
+var den_Z = gen_noise(0.002, 0.001, rng);
 
 function density_step_bz(dif, dt) {
     den_A = diffusion_gpu(0, den_A, dif, dt);
@@ -223,6 +227,11 @@ function bz_reaction_step_x_cappedeuler_krnl(den, rate_1, rate_2, rate_3, rate_4
     var h = this.constants.grid_height;
 
     var cur_den = den[i][j];
+    
+    if (cur_den < -16) {
+        return -17;
+    }
+    
     var r1 = rate_1[i][j];
     var r2 = rate_2[i][j];
     var r3 = rate_3[i][j];
@@ -234,7 +243,7 @@ function bz_reaction_step_x_cappedeuler_krnl(den, rate_1, rate_2, rate_3, rate_4
     
     var res = cur_den + produced - consumed;
     
-    return res;
+    return (res < 0) ? -17 : res;
 }
 
 function bz_reaction_step_y_cappedeuler_krnl(den, rate_1, rate_2, rate_3, rate_4, rate_c, dt) {
@@ -320,12 +329,12 @@ function reaction_step_bz(dt) {
     var consumption_z = 
     */
         
-    den_A = bz_reaction_step_a_cappedeuler(den_A, rate_1, rate_2, rate_3, rate_4, rate_c, dt);
-    den_B = bz_reaction_step_a_cappedeuler(den_B, rate_1, rate_2, rate_3, rate_4, rate_c, dt);
-    den_P = bz_reaction_step_a_cappedeuler(den_P, rate_1, rate_2, rate_3, rate_4, rate_c, dt);
-    den_X = bz_reaction_step_a_cappedeuler(den_X, rate_1, rate_2, rate_3, rate_4, rate_c, dt);
-    den_Y = bz_reaction_step_a_cappedeuler(den_Y, rate_1, rate_2, rate_3, rate_4, rate_c, dt);
-    den_Z = bz_reaction_step_a_cappedeuler(den_Z, rate_1, rate_2, rate_3, rate_4, rate_c, dt);
+    //den_A = bz_reaction_step_a_cappedeuler(den_A, rate_1, rate_2, rate_3, rate_4, rate_c, dt);
+    //den_B = bz_reaction_step_b_cappedeuler(den_B, rate_1, rate_2, rate_3, rate_4, rate_c, dt);
+    den_P = bz_reaction_step_p_cappedeuler(den_P, rate_1, rate_2, rate_3, rate_4, rate_c, dt);
+    den_X = bz_reaction_step_x_cappedeuler(den_X, rate_1, rate_2, rate_3, rate_4, rate_c, dt);
+    den_Y = bz_reaction_step_y_cappedeuler(den_Y, rate_1, rate_2, rate_3, rate_4, rate_c, dt);
+    den_Z = bz_reaction_step_z_cappedeuler(den_Z, rate_1, rate_2, rate_3, rate_4, rate_c, dt);
         
 
     
