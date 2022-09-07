@@ -23,8 +23,9 @@ div#desc {
     font-size: 1.3em; 
     padding-left: 1.5em;
     padding-top: 1.5em;
-    float: left;
     position: relative;
+    
+    width: calc(100vw-100vh-6em);
 }
 
 div#eqn {
