@@ -1,6 +1,7 @@
 <html>
     <head>
-        <script src="gpu-browser.min.js"></script>
+        <!-- <script src="gpu-browser.min.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/gpu.js@latest/dist/gpu-browser.min.js"></script>
         
         <script src="constants-2.js"></script>
         <script src="utils.js"></script>
@@ -53,8 +54,10 @@
             <div class="message">
                 <br>
                 If the space on the left side is all black, your browser might not support GPU.js.<br>
-                Firefox is know to have problems, so you can try chrome. <br>
-                If not, you device might have not supported WebGL 2.0 at all. You can <a href="cpu-scripts/index.html">try the CPU version</a>.
+                You can try a different browser. <br>
+                If not, you device might have not supported WebGL 2.0 at all. You can <a href="cpu-scripts/index.html">try the CPU version</a>. <br>
+                <br>
+                Currently there is also issue where region with B have a red-orange 'static' pattern as the simulation advance.<br>
             </div>
             
         </div>

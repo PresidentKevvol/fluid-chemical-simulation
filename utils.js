@@ -69,7 +69,7 @@ function value_mapping_3(x, max) {
 
 //gpu kernel creator
 
-var gpu = new GPU();
+var gpu = new GPU.GPU();
 
 function addition_krnl(a, b) {
     var i = this.thread.y;
