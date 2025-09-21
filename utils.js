@@ -81,7 +81,8 @@ function subtraction_krnl(a, b) {
     var i = this.thread.y;
     var j = this.thread.x;
     
-    return a[i][j] - b[i][j];
+    // subtract but capped at 0
+    return a[i][j] < b[i][j] ? 0 : a[i][j] - b[i][j];
 }
 
 const addition_gpu = gpu.createKernel(addition_krnl, {

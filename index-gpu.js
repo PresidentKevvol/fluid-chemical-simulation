@@ -137,7 +137,14 @@ function ijs_setup() {
     document.getElementById("start-sim").addEventListener("click", start_simulation);
 }
 
+var sim_started = false;
+
 function start_simulation() {
+    if (sim_started) {
+        return;
+    }
+    sim_started = true;
+
     simulation_step_multi_gpu();
     
     simulation_loop_interval = setInterval(simulation_step_multi_gpu, 75);
